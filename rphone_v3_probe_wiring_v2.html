@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>R-Phone V3 — Probe Wiring Final</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&display=swap');
+
+  :root {
+    --bg:      #080c10;
+    --bg2:     #0c1118;
+    --panel:   #101620;
+    --panel2:  #141c28;
+    --border:  #1a2838;
+    --border2: #223040;
+    --accent:  #00d4ff;
+    --green:   #00ff9d;
+    --warn:    #ffaa00;
+    --danger:  #ff4466;
+    --purple:  #aa66ff;
+    --orange:  #ff8844;
+    --red:     #ff5555;
+    --muted:   #344858;
+    --muted2:  #4a6070;
+    --text:    #7aa0b8;
+    --head:    #cce4f0;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 15px;
+    min-height: 100vh;
+  }
+
+  body::before {
+    content:'';
+    position:fixed; inset:0;
+    background: repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.07) 2px,rgba(0,0,0,0.07) 4px);
+    pointer-events:none; z-index:999;
+  }
+
+  .wrap { max-width:800px; margin:0 auto; padding:36px 22px 80px; }
+
+  /* HEADER */
+  .eyebrow {
+    font-family:'Share Tech Mono',monospace;
+    font-size:10px; color:var(--accent);
+    letter-spacing:4px; margin-bottom:8px; opacity:.8;
+  }
+  h1 {
+    font-family:'Share Tech Mono',monospace;
+    font-size:26px; color:var(--head);
+    letter-spacing:3px; line-height:1.2;
+    text-shadow:0 0 28px rgba(0,212,255,.25);
+  }
+  h1 span { color:var(--accent); }
+  .sub { margin-top:8px; font-size:13px; color:var(--muted2); font-weight:500; letter-spacing:.5px; }
+
+  .badges { display:flex; gap:7px; margin-top:16px; flex-wrap:wrap; }
+  .badge {
+    font-family:'Share Tech Mono',monospace;
+    font-size:10px; padding:3px 10px; border-radius:2px; letter-spacing:1.5px;
+  }
+  .b-c { border:1px solid var(--accent);  color:var(--accent);  background:rgba(0,212,255,.05); }
+  .b-g { border:1px solid var(--green);   color:var(--green);   background:rgba(0,255,157,.05); }
+  .b-w { border:1px solid var(--warn);    color:var(--warn);    background:rgba(255,170,0,.05); }
+  .b-p { border:1px solid var(--purple);  color:var(--purple);  background:rgba(170,102,255,.05); }
+  .b-o { border:1px solid var(--orange);  color:var(--orange);  background:rgba(255,136,68,.05); }
+
+  /* PROGRESS */
+  .prog { display:flex; gap:4px; margin:32px 0 36px; }
+  .pseg {
+    flex:1; height:3px; border-radius:2px;
+    background:var(--border2); cursor:pointer; transition:background .3s;
+  }
+  .pseg.done   { background:var(--green); }
+  .pseg.active { background:var(--accent); }
+
+  /* SECTION LABEL */
+  .sec {
+    font-family:'Share Tech Mono',monospace;
+    font-size:9px; letter-spacing:4px; color:var(--muted);
+    text-transform:uppercase; margin:32px 0 14px;
+    display:flex; align-items:center; gap:12px;
+  }
+  .sec::after { content:''; flex:1; height:1px; background:linear-gradient(to right,var(--border2),transparent); }
+
+  /* STEP CARD */
+  .card {
+    display:flex; margin-bottom:10px;
+    border:1px solid var(--border); border-radius:8px;
+    overflow:hidden; transition:border-color .2s, box-shadow .2s; cursor:pointer;
+  }
+  .card:hover { border-color:var(--border2); box-shadow:0 0 18px rgba(0,212,255,.05); }
+  .card.done  { opacity:.45; border-color:rgba(0,255,157,.2); }
+  .card.done .snum { background:rgba(0,255,157,.04); }
+
+  .snum {
+    width:50px; min-width:50px;
+    display:flex; flex-direction:column;
+    align-items:center; justify-content:flex-start;
+    padding:14px 0 0; gap:7px;
+    background:var(--panel2); border-right:1px solid var(--border);
+  }
+  .snum .n { font-family:'Share Tech Mono',monospace; font-size:15px; color:var(--accent); }
+  .snum .ck { font-size:13px; color:var(--muted); transition:color .15s, text-shadow .15s; user-select:none; }
+  .card.done .snum .ck { color:var(--green); text-shadow:0 0 8px var(--green); }
+
+  .sbody { flex:1; padding:15px 17px; background:var(--panel); }
+
+  .shead {
+    font-size:15px; font-weight:700; color:var(--head);
+    margin-bottom:12px; display:flex; align-items:center; gap:9px; flex-wrap:wrap;
+  }
+  .tag {
+    font-family:'Share Tech Mono',monospace;
+    font-size:9px; padding:2px 8px; border-radius:2px; letter-spacing:1px;
+  }
+  .t-c  { background:rgba(0,212,255,.1);   border:1px solid rgba(0,212,255,.25);  color:var(--accent); }
+  .t-g  { background:rgba(0,255,157,.1);   border:1px solid rgba(0,255,157,.25);  color:var(--green); }
+  .t-w  { background:rgba(255,170,0,.1);   border:1px solid rgba(255,170,0,.25);  color:var(--warn); }
+  .t-p  { background:rgba(170,102,255,.1); border:1px solid rgba(170,102,255,.25);color:var(--purple); }
+  .t-r  { background:rgba(255,85,85,.1);   border:1px solid rgba(255,85,85,.25);  color:var(--red); }
+  .t-o  { background:rgba(255,136,68,.1);  border:1px solid rgba(255,136,68,.25); color:var(--orange); }
+
+  /* WIRE ROWS */
+  .wires { display:flex; flex-direction:column; gap:5px; }
+  .wire {
+    display:flex; align-items:center; gap:9px;
+    font-family:'Share Tech Mono',monospace; font-size:12px;
+    padding:6px 9px; border-radius:4px;
+    background:rgba(255,255,255,.015); border:1px solid transparent;
+    transition:background .15s, border-color .15s;
+  }
+  .wire:hover { background:rgba(0,212,255,.04); border-color:rgba(0,212,255,.1); }
+  .wf { color:var(--accent); min-width:130px; white-space:nowrap; }
+  .wa { color:var(--muted); flex-shrink:0; }
+  .wt { color:var(--text); flex:1; line-height:1.5; }
+
+  .chip {
+    display:inline-block; padding:1px 6px; border-radius:2px;
+    font-size:10px; margin-right:2px;
+  }
+  .c-esp   { background:rgba(255,120,60,.15); border:1px solid rgba(255,120,60,.3); color:var(--orange); }
+  .c-ads   { background:rgba(0,212,255,.1);   border:1px solid rgba(0,212,255,.25); color:var(--accent); }
+  .c-ina   { background:rgba(0,255,157,.1);   border:1px solid rgba(0,255,157,.25); color:var(--green); }
+  .c-rel   { background:rgba(170,102,255,.1); border:1px solid rgba(170,102,255,.25);color:var(--purple); }
+  .c-div   { background:rgba(255,170,0,.1);   border:1px solid rgba(255,170,0,.25); color:var(--warn); }
+  .c-node  { background:rgba(0,212,255,.08);  border:1px solid rgba(0,212,255,.2);  color:var(--accent); }
+  .c-jack  { background:rgba(255,85,85,.1);   border:1px solid rgba(255,85,85,.25); color:var(--red); }
+  .c-gnd   { background:rgba(60,80,100,.2);   border:1px solid rgba(60,80,100,.4);  color:var(--muted2); }
+  .c-comp  { background:rgba(100,180,100,.1); border:1px solid rgba(100,180,100,.3);color:#88cc88; }
+
+  /* NODE BOX */
+  .nbox {
+    margin-top:12px; padding:13px 15px; border-radius:6px;
+  }
+  .nbox.orange { background:rgba(255,170,0,.04);   border:1px solid rgba(255,170,0,.15); }
+  .nbox.blue   { background:rgba(0,212,255,.04);   border:1px solid rgba(0,212,255,.12); }
+  .nbox-title {
+    font-family:'Share Tech Mono',monospace;
+    font-size:10px; letter-spacing:2px; margin-bottom:10px;
+  }
+  .nbox.orange .nbox-title { color:var(--warn); }
+  .nbox.blue   .nbox-title { color:var(--accent); }
+
+  /* FORMULA BOX */
+  .fbox {
+    margin-top:12px; padding:14px 16px; border-radius:6px;
+    background:rgba(0,212,255,.04); border:1px solid rgba(0,212,255,.12);
+    font-family:'Share Tech Mono',monospace; font-size:12px;
+    color:var(--accent); line-height:2;
+  }
+  .fbox .fl { font-size:9px; letter-spacing:2px; color:var(--muted2); margin-bottom:4px; display:block; }
+  .fbox .fv { color:var(--green); }
+  .fbox .fc { color:var(--muted2); }
+
+  /* NOTE */
+  .note {
+    margin-top:11px; padding:9px 13px; border-radius:4px;
+    font-size:13px; font-weight:500; line-height:1.55;
+  }
+  .note.warn { border-left:3px solid var(--warn);   background:rgba(255,170,0,.06);   color:#b08040; }
+  .note.info { border-left:3px solid var(--accent);  background:rgba(0,212,255,.06);   color:#5888a0; }
+  .note.ok   { border-left:3px solid var(--green);   background:rgba(0,255,157,.06);   color:#40907a; }
+  .note.danger{ border-left:3px solid var(--danger); background:rgba(255,68,102,.06);  color:#b06070; }
+
+  /* MODE SWITCH OVERVIEW */
+  .mode-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:4px; }
+  .mcard { padding:13px 14px; border-radius:6px; background:var(--bg2); border:1px solid var(--border); }
+  .mcard h4 { font-family:'Share Tech Mono',monospace; font-size:10px; letter-spacing:2px; margin-bottom:8px; }
+  .mcard.dioda h4 { color:var(--accent); }
+  .mcard.volt  h4 { color:var(--green); }
+  .mcard .path {
+    font-family:'Share Tech Mono',monospace; font-size:11px;
+    margin-top:7px; padding:7px 9px; border-radius:3px; line-height:1.9;
+  }
+  .mcard.dioda .path { background:rgba(0,212,255,.06); color:var(--accent); }
+  .mcard.volt  .path { background:rgba(0,255,157,.06); color:var(--green); }
+
+  /* FLOW BOX */
+  .flow {
+    background:var(--bg2); border:1px solid var(--border2);
+    border-radius:10px; padding:22px; margin-bottom:12px; position:relative; overflow:hidden;
+  }
+  .flow::before {
+    content:''; position:absolute; top:0; left:0; right:0; height:2px;
+    background:linear-gradient(90deg,transparent,var(--accent),transparent); opacity:.4;
+  }
+  .flow-title {
+    font-family:'Share Tech Mono',monospace; font-size:11px;
+    color:var(--accent); letter-spacing:2px; margin-bottom:18px;
+    display:flex; align-items:center; gap:8px;
+  }
+  .dot {
+    width:6px; height:6px; border-radius:50%;
+    background:var(--accent); box-shadow:0 0 8px var(--accent);
+    animation:pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+  /* GPIO TABLE */
+  .gpio {
+    display:flex; align-items:center; gap:10px;
+    font-family:'Share Tech Mono',monospace; font-size:12px;
+    padding:7px 10px; border-radius:4px;
+    background:rgba(255,255,255,.015); border:1px solid transparent;
+    margin-bottom:5px; transition:background .15s;
+  }
+  .gpio:hover { background:rgba(255,136,68,.04); border-color:rgba(255,136,68,.1); }
+  .gpio-pin  { color:var(--orange); min-width:55px; font-weight:700; }
+  .gpio-arr  { color:var(--muted); }
+  .gpio-desc { color:var(--text); flex:1; }
+
+  /* SUMMARY */
+  .sumbar {
+    display:flex; margin-top:38px;
+    border:1px solid var(--border2); border-radius:8px; overflow:hidden;
+  }
+  .sumi {
+    flex:1; padding:15px 18px; background:var(--panel2);
+    border-right:1px solid var(--border); text-align:center;
+  }
+  .sumi:last-child { border-right:none; }
+  .sumv {
+    font-family:'Share Tech Mono',monospace; font-size:22px;
+    color:var(--accent); display:block; line-height:1; margin-bottom:4px;
+  }
+  .suml { font-size:10px; letter-spacing:2px; color:var(--muted); font-family:'Share Tech Mono',monospace; }
+
+  footer {
+    margin-top:44px; text-align:center;
+    font-family:'Share Tech Mono',monospace; font-size:10px;
+    color:var(--muted); letter-spacing:3px;
+  }
+
+  @media(max-width:580px){
+    .wf { min-width:90px; }
+    .mode-grid { grid-template-columns:1fr; }
+    .sumbar { flex-direction:column; }
+    .sumi { border-right:none; border-bottom:1px solid var(--border); }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- HEADER -->
+<header style="margin-bottom:40px; padding-bottom:20px; border-bottom:1px solid var(--border2);">
+  <div class="eyebrow">WIRING GUIDE · PROBE MODE</div>
+  <h1>R-PHONE V3<br><span>PROBE</span> WIRING FINAL</h1>
+  <div class="sub">Jack Probe Merah & Hitam → ESP32 · Skema Lengkap Terbaru</div>
+  <div class="badges">
+    <span class="badge b-o">FW v3.3.1</span>
+    <span class="badge b-c">ESP32 G23 · G32</span>
+    <span class="badge b-c">ADS1115 0x48</span>
+    <span class="badge b-g">INA3221 CH3</span>
+    <span class="badge b-w">DIVIDER 30k/7.5k</span>
+    <span class="badge b-p">6 LANGKAH</span>
+  </div>
+</header>
+
+<div class="prog" id="prog"></div>
+
+<!-- OVERVIEW -->
+<div class="sec">OVERVIEW — MODE SWITCH</div>
+<div class="flow">
+  <div class="flow-title"><span class="dot"></span>RELAY PROBE (G23) — 2 MODE</div>
+  <div class="mode-grid">
+    <div class="mcard dioda">
+      <h4>MODE DIODA · G23 HIGH</h4>
+      <p style="font-size:12px;color:var(--muted2);font-weight:500">Relay ON → NO aktif</p>
+      <div class="path">
+        PROBE MERAH<br>
+        → COM → NO<br>
+        → R_top 30kΩ<br>
+        → DIVIDER_NODE<br>
+        → ADS1115 A0
+      </div>
+    </div>
+    <div class="mcard volt">
+      <h4>MODE VOLT · G23 LOW</h4>
+      <p style="font-size:12px;color:var(--muted2);font-weight:500">Relay OFF → NC aktif</p>
+      <div class="path">
+        PROBE MERAH<br>
+        → COM → NC<br>
+        → INA3221<br>
+        &nbsp;&nbsp;Vin3+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LANGKAH -->
+<div class="sec">LANGKAH WIRING</div>
+
+<!-- STEP 1 -->
+<div class="card" id="c1" onclick="tog(1)">
+  <div class="snum"><span class="n">01</span><span class="ck">✓</span></div>
+  <div class="sbody">
+    <div class="shead">Jack Probe ke Relay COM <span class="tag t-r">JACK</span><span class="tag t-p">RELAY</span></div>
+    <div class="wires">
+      <div class="wire">
+        <span class="wf"><span class="chip c-jack">JACK</span> PROBE MERAH</span>
+        <span class="wa">───►</span>
+        <span class="wt"><span class="chip c-rel">RELAY PROBE</span> COM</span>
+      </div>
+      <div class="wire">
+        <span class="wf"><span class="chip c-jack">JACK</span> PROBE HITAM</span>
+        <span class="wa">───►</span>
+        <span class="wt"><span class="chip c-gnd">GND</span> sistem</span>
+      </div>
+    </div>
+    <div class="note info">ℹ Probe hitam langsung ke GND. Probe merah menerima Vsupply 2.8V dari NODE via Relay COM.</div>
+  </div>
+</div>
+
+<!-- STEP 2 -->
+<div class="card" id="c2" onclick="tog(2)">
+  <div class="snum"><span class="n">02</span><span class="ck">✓</span></div>
+  <div class="sbody">
+    <div class="shead">Relay Probe — Semua Pin <span class="tag t-p">RELAY PROBE</span><span class="tag t-c">G23</span></div>
+    <div class="wires">
+      <div class="wire">
+        <span class="wf"><span class="chip c-rel">RELAY</span> DC+</span>
+        <span class="wa">───►</span>
+        <span class="wt">5V / 12V (sesuai relay)</span>
+      </div>
+      <div class="wire">
+        <span class="wf"><span class="chip c-rel">RELAY</span> DC−</span>
+        <span class="wa">───►</span>
+        <span class="wt"><span class="chip c-gnd">GND</span></span>
+      </div>
+      <div class="wire">
+        <span class="wf"><span class="chip c-rel">RELAY</span> IN</span>
+        <span class="wa">───►</span>
+        <span class="wt"><span class="chip c-esp">ESP32</span> G23</span>
+      </div>
+      <div class="wire">
+        <span class="wf"><span class="chip c-rel">RELAY</span> COM</span>
+        <span class="wa">───►</span>
+        <span class="wt"><span class="chip c-jack">JACK</span> PROBE MERAH</span>
+      </div>
+      <div class="wire">
+        <span class="wf"><span class="chip c-rel">RELAY</span> NO</span>
+        <span class="wa">───►</span>
+        <span class="wt"><span class="chip c-div">NODE</span> → R_top 30kΩ <span style="color:var(--muted2);font-size:11px">(mode dioda)</span></span>
+      </div>
+      <div class="wire">
+        <span class="wf"><span class="chip c-rel">RELAY</span> NC</span>
+        <span class="wa">───►</span>
+        <span class="wt"><span class="chip c-ina">INA3221</span> Vin3+ <span style="color:var(--muted2);font-size:11px">(mode volt)</span></span>
+      </div>
+    </div>
+    <div class="note warn">⚠ G23 HIGH = relay ON = NO aktif = Mode Dioda · G23 LOW = relay OFF = NC aktif = Mode Volt</div>
+  </div>
+</div>
+
+<!-- STEP 3 -->
+<div class="card" id="c3" onclick="tog(3)">
+  <div class="snum"><span class="n">03</span><span class="ck">✓</span></div>
+  <div class="sbody">
+    <div class="shead">NODE — Supply Vsupply 2.8V <span class="tag t-o">G32</span><span class="tag t-c">NODE</span></div>
+    <div class="wires">
+      <div class="wire">
+        <span class="wf"><span class="chip c-esp">ESP32</span> G32</span>
+        <span class="wa">───►</span>
+        <span class="wt"><span class="chip c-comp">1N4148</span> Katoda → Anoda → <span class="chip c-node">NODE</span></span>
+      </div>
+      <div class="wire">
+        <span class="wf"><span class="chip c-node">NODE</span></span>
+        <span class="wa">───►</span>
+        <span class="wt">R 470kΩ → <span class="chip c-gnd">GND</span> <span style="color:var(--muted2);font-size:11px">(pull-down)</span></span>
+      </div>
+      <div class="wire">
+        <span class="wf"><span class="chip c-node">NODE</span></span>
+        <span class="wa">───►</span>
+        <span class="wt">C1 100nF → <span class="chip c-gnd">GND</span> <span style="color:var(--muted2);font-size:11px">(filter noise supply)</span></span>
+      </div>
+      <div class="wire">
+        <span class="wf"><span class="chip c-node">NODE</span></span>
+        <span class="wa">───►</span>
+        <span class="wt"><span class="chip c-rel">RELAY</span> COM <span style="color:var(--muted2);font-size:11px">→ Probe Merah (2.8V)</span></span>
+      </div>
+      <div class="wire">
+        <span class="wf"><span class="chip c-node">NODE</span></span>
+        <span class="wa">───►</span>
+        <span class="wt">R_top 30kΩ → <span class="chip c-div">DIVIDER_NODE</span></span>
+      </div>
+    </div>
+    <div class="nbox orange" style="margin-top:12px">
+      <div class="nbox-title">▸ VSUPPLY PROBE MERAH</div>
+      <div class="wires">
+        <div class="wire">
+          <span class="wf" style="color:var(--warn)">G32 HIGH</span>
+          <span class="wa">═</span>
+          <span class="wt">3.3V output ESP32</span>
+        </div>
+        <div class="wire">
+          <span class="wf" style="color:var(--warn)">1N4148 drop</span>
+          <span class="wa">═</span>
+          <span class="wt">~0.5V (forward voltage)</span>
+        </div>
+        <div class="wire">
+          <span class="wf" style="color:var(--warn)">NODE = Probe</span>
+          <span class="wa">═</span>
+          <span class="wt" style="color:var(--green);font-weight:700">2.8V Vsupply ✓</span>
+        </div>
+        <div class="wire">
+          <span class="wf" style="color:var(--warn)">Pengaruh divider</span>
+          <span class="wa">═</span>
+          <span class="wt">TIDAK ADA — divider hanya mencuplik sinyal</span>
+        </div>
+      </div>
+    </div>
+    <div class="note info">ℹ 1N4148 berfungsi sebagai supply jalur + voltage drop. Bukan proteksi. Jika dibuang, Vsupply probe merah hilang.</div>
+  </div>
+</div>
+
+<!-- STEP 4 -->
+<div class="card" id="c4" onclick="tog(4)">
+  <div class="snum"><span class="n">04</span><span class="ck">✓</span></div>
+  <div class="sbody">
+    <div class="shead">Voltage Divider 30kΩ / 7.5kΩ <span class="tag t-w">DIVIDER</span><span class="tag t-c">ADS1115 A0</span></div>
+    <div class="wires">
+      <div class="wire">
+        <span class="wf">R_top 30kΩ · pin1</span>
+        <span class="wa">───►</span>
+        <span class="wt"><span class="chip c-node">NODE</span></span>
+      </div>
+      <div class="wire">
+        <span class="wf">R_top 30kΩ · pin2</span>
+        <span class="wa">───►</span>
+        <span class="wt"><span class="chip c-div">DIVIDER_NODE</span></span>
+      </div>
+      <div class="wire">
+        <span class="wf">R_bot 7.5kΩ · pin1</span>
+        <span class="wa">───►</span>
+        <span class="wt"><span class="chip c-div">DIVIDER_NODE</span></span>
+      </div>
+      <div class="wire">
+        <span class="wf">R_bot 7.5kΩ · pin2</span>
+        <span class="wa">───►</span>
+        <span class="wt"><span class="chip c-gnd">GND</span></span>
+      </div>
+      <div class="wire">
+        <span class="wf">C2 100nF · pin1</span>
+        <span class="wa">───►</span>
+        <span class="wt"><span class="chip c-div">DIVIDER_NODE</span> <span style="color:var(--muted2);font-size:11px">(paralel R_bot)</span></span>
+      </div>
+      <div class="wire">
+        <span class="wf">C2 100nF · pin2</span>
+        <span class="wa">───►</span>
+        <span class="wt"><span class="chip c-gnd">GND</span></span>
+      </div>
+      <div class="wire">
+        <span class="wf"><span class="chip c-div">DIVIDER_NODE</span></span>
+        <span class="wa">───►</span>
+        <span class="wt"><span class="chip c-ads">ADS1115</span> A0</span>
+      </div>
+    </div>
+    <div class="fbox">
+      <span class="fl">KALKULASI DIVIDER</span>
+      Rasio&nbsp;&nbsp; = 7.5 / (30 + 7.5) = <span class="fv">0.2</span><br>
+      Vadc&nbsp;&nbsp;&nbsp; = Vnode × 0.2<br>
+      Vnode&nbsp;&nbsp; = Vadc × <span class="fv">5.0</span> &nbsp;<span class="fc">← firmware reconstruct</span><br>
+      <br>
+      <span class="fl">CONTOH</span>
+      Vsupply idle 2.8V → A0 = <span class="fv">0.56V</span><br>
+      Vdrop 0.6V&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; → A0 = <span class="fv">0.12V</span> → reconstruct <span class="fv">0.6V ✓</span><br>
+      Vdrop 0.3V&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; → A0 = <span class="fv">0.06V</span> → reconstruct <span class="fv">0.3V ✓</span><br>
+      <br>
+      <span class="fl">FILTER NOISE (C2 + R_top)</span>
+      Fc = 1 / (2π × 30k × 100nF) = <span class="fv">~53Hz</span> <span class="fc">← noise &gt;53Hz teredam</span>
+    </div>
+    <div class="note warn">⚠ Auto-switch: jika Vrecon ≥ 2.8V (1x sample) → G23 LOW → Mode Volt otomatis. Contoh: probe nyasar ke baterai 3.7V.</div>
+  </div>
+</div>
+
+<!-- STEP 5 -->
+<div class="card" id="c5" onclick="tog(5)">
+  <div class="snum"><span class="n">05</span><span class="ck">✓</span></div>
+  <div class="sbody">
+    <div class="shead">ADS1115 ke ESP32 <span class="tag t-c">ADS1115</span><span class="tag t-c">I²C 0x48</span></div>
+    <div class="wires">
+      <div class="wire">
+        <span class="wf"><span class="chip c-ads">ADS1115</span> VDD</span>
+        <span class="wa">───►</span>
+        <span class="wt"><span class="chip c-esp">ESP32</span> 3.3V</span>
+      </div>
+      <div class="wire">
+        <span class="wf"><span class="chip c-ads">ADS1115</span> GND</span>
+        <span class="wa">───►</span>
+        <span class="wt"><span class="chip c-gnd">GND</span></span>
+      </div>
+      <div class="wire">
+        <span class="wf"><span class="chip c-ads">ADS1115</span> SCL</span>
+        <span class="wa">───►</span>
+        <span class="wt"><span class="chip c-esp">ESP32</span> G22</span>
+      </div>
+      <div class="wire">
+        <span class="wf"><span class="chip c-ads">ADS1115</span> SDA</span>
+        <span class="wa">───►</span>
+        <span class="wt"><span class="chip c-esp">ESP32</span> G21</span>
+      </div>
+      <div class="wire">
+        <span class="wf"><span class="chip c-ads">ADS1115</span> ADDR</span>
+        <span class="wa">───►</span>
+        <span class="wt"><span class="chip c-gnd">GND</span> <span style="color:var(--muted2);font-size:11px">→ I²C addr 0x48</span></span>
+      </div>
+      <div class="wire">
+        <span class="wf"><span class="chip c-ads">ADS1115</span> A0</span>
+        <span class="wa">───►</span>
+        <span class="wt"><span class="chip c-div">DIVIDER_NODE</span></span>
+      </div>
+      <div class="wire">
+        <span class="wf"><span class="chip c-ads">ADS1115</span> A1–A3</span>
+        <span class="wa">───►</span>
+        <span class="wt" style="color:var(--muted2)">— tidak dipakai</span>
+      </div>
+    </div>
+    <div class="note info">ℹ ADS1115 berbagi bus I²C dengan INA3221 di G21/G22. PGA ±2.048V. Raw 32767 = 2.048V.</div>
+  </div>
+</div>
+
+<!-- STEP 6 -->
+<div class="card" id="c6" onclick="tog(6)">
+  <div class="snum"><span class="n">06</span><span class="ck">✓</span></div>
+  <div class="sbody">
+    <div class="shead">INA3221 Vin3 — Mode Volt <span class="tag t-g">INA3221</span><span class="tag t-g">CH3</span></div>
+    <div class="wires">
+      <div class="wire">
+        <span class="wf"><span class="chip c-ina">INA3221</span> Vin3+</span>
+        <span class="wa">───►</span>
+        <span class="wt"><span class="chip c-rel">RELAY PROBE</span> NC</span>
+      </div>
+      <div class="wire">
+        <span class="wf"><span class="chip c-ina">INA3221</span> Vin3−</span>
+        <span class="wa">───►</span>
+        <span class="wt" style="color:var(--muted2)">— kosong (GND ref internal)</span>
+      </div>
+    </div>
+    <div class="note ok">✓ Aktif saat G23 LOW. Probe merah langsung ke Vin3+ via Relay NC untuk baca tegangan. Auto-switch dari mode dioda juga landing di sini.</div>
+  </div>
+</div>
+
+<!-- GPIO SUMMARY -->
+<div class="sec">RINGKASAN GPIO ESP32</div>
+<div class="flow">
+  <div class="flow-title"><span class="dot"></span>PIN YANG DIPAKAI — PROBE</div>
+  <div class="gpio">
+    <span class="gpio-pin">G21</span>
+    <span class="gpio-arr">───►</span>
+    <span class="gpio-desc">I²C SDA → ADS1115 + INA3221</span>
+  </div>
+  <div class="gpio">
+    <span class="gpio-pin">G22</span>
+    <span class="gpio-arr">───►</span>
+    <span class="gpio-desc">I²C SCL → ADS1115 + INA3221</span>
+  </div>
+  <div class="gpio">
+    <span class="gpio-pin">G23</span>
+    <span class="gpio-arr">───►</span>
+    <span class="gpio-desc">Relay Probe IN · HIGH = Mode Dioda · LOW = Mode Volt</span>
+  </div>
+  <div class="gpio">
+    <span class="gpio-pin">G32</span>
+    <span class="gpio-arr">───►</span>
+    <span class="gpio-desc">Vsupply Probe · HIGH = 3.3V → 1N4148 → NODE = 2.8V</span>
+  </div>
+</div>
+
+<!-- BOM -->
+<div class="sec">SHOPPING LIST — KOMPONEN PROBE</div>
+<div class="flow">
+  <div class="flow-title"><span class="dot"></span>BOM FINAL</div>
+  <div class="wires">
+    <div class="wire">
+      <span class="wf" style="color:var(--green)">1N4148</span>
+      <span class="wa">·</span>
+      <span class="wt">1 pcs · DO-35 · stok umum · <span style="color:var(--green)">WAJIB</span> — supply + drop 0.5V</span>
+    </div>
+    <div class="wire">
+      <span class="wf" style="color:var(--green)">R 470kΩ</span>
+      <span class="wa">·</span>
+      <span class="wt">1 pcs · TH · stok umum · <span style="color:var(--green)">WAJIB</span> — pull-down NODE</span>
+    </div>
+    <div class="wire">
+      <span class="wf" style="color:var(--green)">R 30kΩ</span>
+      <span class="wa">·</span>
+      <span class="wt">1 pcs · TH · stok umum · <span style="color:var(--green)">WAJIB</span> — divider top</span>
+    </div>
+    <div class="wire">
+      <span class="wf" style="color:var(--green)">R 7.5kΩ</span>
+      <span class="wa">·</span>
+      <span class="wt">1 pcs · TH · stok umum · <span style="color:var(--green)">WAJIB</span> — divider bot</span>
+    </div>
+    <div class="wire">
+      <span class="wf" style="color:var(--green)">C 100nF</span>
+      <span class="wa">·</span>
+      <span class="wt">2 pcs · TH · stok umum · <span style="color:var(--green)">WAJIB</span> — C1 NODE + C2 DIVIDER_NODE</span>
+    </div>
+    <div class="wire" style="opacity:.4">
+      <span class="wf" style="color:var(--danger)">R 10kΩ</span>
+      <span class="wa">·</span>
+      <span class="wt" style="color:var(--danger)">❌ DIHAPUS</span>
+    </div>
+    <div class="wire" style="opacity:.4">
+      <span class="wf" style="color:var(--danger)">R 1kΩ</span>
+      <span class="wa">·</span>
+      <span class="wt" style="color:var(--danger)">❌ DIHAPUS</span>
+    </div>
+    <div class="wire" style="opacity:.4">
+      <span class="wf" style="color:var(--danger)">Zener 1N4727</span>
+      <span class="wa">·</span>
+      <span class="wt" style="color:var(--danger)">❌ DIHAPUS</span>
+    </div>
+  </div>
+</div>
+
+<!-- SUMMARY BAR -->
+<div class="sumbar">
+  <div class="sumi">
+    <span class="sumv" id="sv">0</span>
+    <span class="suml">SELESAI</span>
+  </div>
+  <div class="sumi">
+    <span class="sumv">6</span>
+    <span class="suml">TOTAL</span>
+  </div>
+  <div class="sumi">
+    <span class="sumv" id="pv">0%</span>
+    <span class="suml">PROGRESS</span>
+  </div>
+  <div class="sumi">
+    <span class="sumv" id="stv" style="font-size:14px;color:var(--muted2)">—</span>
+    <span class="suml">STATUS</span>
+  </div>
+</div>
+
+<footer style="margin-top:44px">R-PHONE V3 · PROBE WIRING FINAL · GENERATED BY DIN</footer>
+</div>
+
+<script>
+  const T = 6;
+  const done = new Set();
+
+  function tog(n) {
+    const c = document.getElementById('c'+n);
+    done.has(n) ? done.delete(n) : done.add(n);
+    c.classList.toggle('done', done.has(n));
+    render();
+  }
+
+  function render() {
+    const d = done.size;
+    const pct = Math.round(d / T * 100);
+    document.getElementById('sv').textContent = d;
+    document.getElementById('pv').textContent = pct + '%';
+    const stEl = document.getElementById('stv');
+    stEl.textContent = d===0 ? '—' : d===T ? '✓ DONE' : 'ON PROGRESS';
+    stEl.style.color = d===T ? 'var(--green)' : d===0 ? 'var(--muted2)' : 'var(--accent)';
+
+    const bar = document.getElementById('prog');
+    bar.innerHTML = '';
+    for (let i = 1; i <= T; i++) {
+      const s = document.createElement('div');
+      const isDone = done.has(i);
+      const isActive = !isDone && i === [...Array(T+1).keys()].slice(1).find(x => !done.has(x));
+      s.className = 'pseg' + (isDone ? ' done' : isActive ? ' active' : '');
+      s.onclick = () => tog(i);
+      s.style.cursor = 'pointer';
+      bar.appendChild(s);
+    }
+  }
+
+  render();
+</script>
+</body>
+</html>
