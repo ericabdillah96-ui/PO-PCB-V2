@@ -1,17 +1,3 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PO PCB V2</title>
-  <style>
-    *{box-sizing:border-box; font-family:Arial,sans-serif; margin:0; padding:0;}
-    body{max-width:500px; margin:20px auto; padding:0 15px;}
-    h2{text-align:center; margin-bottom:15px; color:#2c3e50;}
-    .stok{background:#e3f2fd; padding:12px; border-radius:8px; text-align:center; font-weight:bold; margin-bottom:20px; font-size:16px;}
-    .info-barang{background:#f8f9fa; padding:12px; border-radius:6px; margin-bottom:15px; text-align:center; font-weight:bold;}
-    input,textarea{width:100%; padding:12px; margin:8px 0; border:1px solid #ddd; border-radius:6px; font-size:15px;}
-    textarea{resize:vertical; min-height:80px;}
     button{background:#2e7d32; color:white; border:none; padding:13px; width:100%; border-radius:6px; font-weight:bold; font-size:16px; margin-top:8px; cursor:pointer;}
     button:active{background:#27662b;}
     #info{margin-top:15px; padding:12px; border-radius:6px; display:none; text-align:center; font-weight:bold;}
